@@ -3,7 +3,6 @@ package restinpeace.sinash.ir.main;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,8 +14,13 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import com.loopj.android.http.*;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class MainActivity extends Activity {
@@ -24,6 +28,7 @@ public class MainActivity extends Activity {
     Button btnConnect;
     EditText etAddress;
     String serverAddress;
+    AsyncHttpClient client = new AsyncHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,8 @@ public class MainActivity extends Activity {
         etAddress = (EditText) findViewById(R.id.main_et_address);
 
 
+
+
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,9 +49,34 @@ public class MainActivity extends Activity {
                     Toast.makeText(getApplicationContext(), "Enter server address and try again.", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    serverAddress = etAddress.getText().toString();
+                    //traditional way
 
-                    new CallWebService().execute(serverAddress);
+                    //must contain protocol, else -> exception occurs
+                    serverAddress = etAddress.getText().toString();
+//                    new CallWebService().execute(serverAddress);
+
+                    //loopj library
+                    client.get(serverAddress, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                            String result = null;
+                            try {
+                                result = new String(responseBody, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                        }
+                    });
+
+
+
                 }
             }
         });
