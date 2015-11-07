@@ -5,14 +5,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
 
     Button btnConnect;
     EditText etAddress;
+    String serverAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,15 @@ public class MainActivity extends Activity {
         btnConnect = (Button) findViewById(R.id.main_btn_connect);
         etAddress = (EditText) findViewById(R.id.main_et_address);
 
+
+        btnConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(etAddress.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(), "Enter server address and try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
     }
