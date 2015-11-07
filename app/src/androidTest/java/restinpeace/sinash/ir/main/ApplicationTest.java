@@ -1,4 +1,4 @@
-package restinpeace.sinash.ir.restinpeace;
+package restinpeace.sinash.ir.main;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

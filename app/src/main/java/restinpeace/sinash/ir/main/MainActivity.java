@@ -1,14 +1,22 @@
-package restinpeace.sinash.ir.restinpeace;
+package restinpeace.sinash.ir.main;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class MainActivity extends Activity {
@@ -21,6 +29,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //getActionBar().setTitle("RESTInPeace");
 
         btnConnect = (Button) findViewById(R.id.main_btn_connect);
         etAddress = (EditText) findViewById(R.id.main_et_address);
@@ -31,6 +40,11 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 if(etAddress.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(), "Enter server address and try again.", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    serverAddress = etAddress.getText().toString();
+
+                    new CallWebService().execute(serverAddress);
                 }
             }
         });
@@ -59,5 +73,45 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class CallWebService extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String urlString = params[0]; //called URL
+
+            String resultToDisplay = "";
+
+            InputStream in = null;
+
+            //HTTP GET
+
+            try{
+                URL url = new URL(urlString);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                in = new BufferedInputStream(urlConnection.getInputStream());
+
+                resultToDisplay = IOUtils.toString(in);
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return e.getMessage();
+            }
+
+//            Log.e("get", resultToDisplay);
+            return resultToDisplay;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+//            Log.e("GET", result.toString());
+//            etAddress.setText(result);
+
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
     }
 }
