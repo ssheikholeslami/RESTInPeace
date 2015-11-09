@@ -1,6 +1,7 @@
 package restinpeace.sinash.ir.main;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -104,14 +105,17 @@ public class MainActivity extends Activity {
 
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONArray array) {
-                            try {
-                                JSONObject object = array.getJSONObject(0);
-                                String number = object.getString("number");
-                                Toast.makeText(getApplicationContext(), "Number: " + number, Toast.LENGTH_SHORT).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-//                            Toast.makeText(getApplicationContext(), "JSON Array", Toast.LENGTH_SHORT).show();
+                            //                                JSONObject object = array.getJSONObject(0);
+//                                String number = object.getString("number");
+                            String response = array.toString();
+
+                            Intent intent = new Intent(getApplicationContext(), ResponseActivity.class);
+
+                            intent.putExtra("response", response);
+
+                            startActivity(intent);
+//                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                            //                            Toast.makeText(getApplicationContext(), "JSON Array", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
