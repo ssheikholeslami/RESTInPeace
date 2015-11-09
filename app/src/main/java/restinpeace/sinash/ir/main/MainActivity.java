@@ -11,6 +11,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -25,7 +28,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends Activity {
 
-    Button btnConnect;
+    Button btnConnect, btnGetList;
     EditText etAddress;
     String serverAddress;
     AsyncHttpClient client = new AsyncHttpClient();
@@ -38,6 +41,7 @@ public class MainActivity extends Activity {
 
         btnConnect = (Button) findViewById(R.id.main_btn_connect);
         etAddress = (EditText) findViewById(R.id.main_et_address);
+        btnGetList = (Button) findViewById(R.id.main_btn_getList);
 
 
 
@@ -78,6 +82,40 @@ public class MainActivity extends Activity {
 
 
                 }
+            }
+        });
+
+        btnGetList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(etAddress.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(), "Enter server address and try again.", Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+                    serverAddress = etAddress.getText().toString() + "/getlist";
+                    client.get(serverAddress, null, new JsonHttpResponseHandler(){
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Toast.makeText(getApplicationContext(), "JSONObject", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray array) {
+                            try {
+                                JSONObject object = array.getJSONObject(0);
+                                String number = object.getString("number");
+                                Toast.makeText(getApplicationContext(), "Number: " + number, Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+//                            Toast.makeText(getApplicationContext(), "JSON Array", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
             }
         });
 
